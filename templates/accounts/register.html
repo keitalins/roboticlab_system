@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register | RoboLab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#0a0e14;--surface:#111720;--border:#1e2d42;--accent:#00d4ff;--text:#c8d6e5;--text-dim:#5a7a9a;--mono:'Share Tech Mono',monospace;--sans:'Barlow',sans-serif; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .wrap{width:100%;max-width:560px;}
+    .logo{text-align:center;margin-bottom:32px;}
+    .logo-text{font-family:var(--mono);font-size:24px;color:var(--accent);letter-spacing:4px;}
+    .logo-sub{font-size:11px;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;margin-top:4px;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:32px;}
+    h2{font-size:15px;font-family:var(--mono);color:var(--accent);margin-bottom:24px;letter-spacing:1px;}
+    .form-group{margin-bottom:16px;}
+    .form-label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--text-dim);margin-bottom:6px;font-weight:600;}
+    .form-control{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px 14px;border-radius:6px;font-family:var(--sans);font-size:14px;transition:border-color 0.15s;}
+    .form-control:focus{outline:none;border-color:var(--accent);}
+    select.form-control option{background:var(--surface);}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .btn-primary{width:100%;padding:12px;background:var(--accent);color:var(--bg);border:none;border-radius:6px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;letter-spacing:1px;text-transform:uppercase;margin-top:8px;transition:background 0.15s;}
+    .btn-primary:hover{background:#00b8d9;}
+    .footer{text-align:center;margin-top:20px;font-size:13px;color:var(--text-dim);}
+    .footer a{color:var(--accent);text-decoration:none;}
+    .errorlist{color:#ff4757;font-size:12px;list-style:none;margin-top:4px;}
+    .help-text{font-size:11px;color:var(--text-dim);margin-top:4px;}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">
+    <div class="logo-text">ROBOLAB</div>
+    <div class="logo-sub">Create Account</div>
+  </div>
+  <div class="card">
+    <h2>// NEW USER REGISTRATION</h2>
+    <form method="post">
+      {% csrf_token %}
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          {{ form.first_name }}
+          {% if form.first_name.errors %}<ul class="errorlist">{% for e in form.first_name.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          {{ form.last_name }}
+          {% if form.last_name.errors %}<ul class="errorlist">{% for e in form.last_name.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        {{ form.username }}
+        {% if form.username.errors %}<ul class="errorlist">{% for e in form.username.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        {{ form.email }}
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Role</label>
+          {{ form.role }}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Department</label>
+          {{ form.department }}
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          {{ form.password1 }}
+          {% if form.password1.errors %}<ul class="errorlist">{% for e in form.password1.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          {{ form.password2 }}
+          {% if form.password2.errors %}<ul class="errorlist">{% for e in form.password2.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+      </div>
+      <button type="submit" class="btn-primary">Create Account →</button>
+    </form>
+  </div>
+  <div class="footer">Already registered? <a href="{% url 'accounts:login' %}">Sign in</a></div>
+</div>
+</body>
+</html>

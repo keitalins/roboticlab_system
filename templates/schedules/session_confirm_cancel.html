@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Cancel Session{% endblock %}
+{% block page_title %}// CANCEL SESSION{% endblock %}
+{% block content %}
+<div style="max-width:500px;">
+  <div class="card">
+    <div class="card-header"><span class="card-title" style="color:var(--danger);">Confirm Cancellation</span></div>
+    <div class="card-body">
+      <p style="margin-bottom:20px;">Are you sure you want to cancel <strong>{{ session.title }}</strong>?</p>
+      <form method="post" style="display:flex;gap:10px;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Cancel Session</button>
+        <a href="{% url 'schedules:session_detail' session.pk %}" class="btn btn-secondary">Go Back</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

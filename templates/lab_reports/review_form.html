@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Review Report{% endblock %}
+{% block page_title %}// REVIEW REPORT{% endblock %}
+{% block content %}
+<div style="max-width:600px;">
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header"><span class="card-title">{{ report.title }}</span></div>
+    <div class="card-body">
+      <div class="detail-row"><div class="detail-key">Author</div><div class="detail-val">{{ report.author.get_full_name|default:report.author.username }}</div></div>
+      <div class="detail-row"><div class="detail-key">Submitted</div><div class="detail-val">{{ report.updated_at|date:"Y-m-d H:i" }}</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Review Decision</span></div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+          <label class="form-label">{{ field.label }}</label>
+          {{ field }}
+        </div>
+        {% endfor %}
+        <div style="display:flex;gap:10px;">
+          <button type="submit" class="btn btn-primary">Submit Review</button>
+          <a href="{% url 'lab_reports:report_detail' report.pk %}" class="btn btn-secondary">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

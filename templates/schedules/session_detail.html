@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}{{ session.title }}{% endblock %}
+{% block page_title %}// SESSION DETAIL{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
+  <div>
+    <h1 style="font-size:22px;font-weight:700;">{{ session.title }}</h1>
+    <div style="color:var(--text-dim);font-size:13px;margin-top:4px;">
+      Requested by {{ session.requested_by.get_full_name|default:session.requested_by.username }}
+      on {{ session.created_at|date:"Y-m-d H:i" }}
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <span class="badge-status badge-{{ session.status }}">{{ session.get_status_display }}</span>
+    {% if can_approve and session.status == 'pending' %}
+    <a href="{% url 'schedules:session_approve' session.pk %}" class="btn btn-primary">Review / Approve</a>
+    {% endif %}
+    {% if session.requested_by == user or user.is_admin %}
+    <a href="{% url 'schedules:session_edit' session.pk %}" class="btn btn-secondary">Edit</a>
+    <a href="{% url 'schedules:session_cancel' session.pk %}" class="btn btn-danger">Cancel</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header"><span class="card-title">Session Info</span></div>
+    <div class="card-body">
+      <div class="detail-row"><div class="detail-key">Start Time</div><div class="detail-val" style="font-family:var(--mono);">{{ session.start_time|date:"Y-m-d H:i" }}</div></div>
+      <div class="detail-row"><div class="detail-key">End Time</div><div class="detail-val" style="font-family:var(--mono);">{{ session.end_time|date:"Y-m-d H:i" }}</div></div>
+      <div class="detail-row"><div class="detail-key">Duration</div><div class="detail-val">{{ session.duration_hours }} hours</div></div>
+      {% if session.approved_by %}
+      <div class="detail-row"><div class="detail-key">Approved By</div><div class="detail-val">{{ session.approved_by.get_full_name|default:session.approved_by.username }}</div></div>
+      {% endif %}
+      {% if session.rejection_reason %}
+      <div class="detail-row"><div class="detail-key">Rejection Reason</div><div class="detail-val" style="color:var(--danger);">{{ session.rejection_reason }}</div></div>
+      {% endif %}
+      {% if session.description %}
+      <div class="detail-row"><div class="detail-key">Description</div><div class="detail-val">{{ session.description }}</div></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">Equipment Reserved</span></div>
+    <div class="card-body">
+      {% if session.equipment.all %}
+      <ul style="list-style:none;display:flex;flex-direction:column;gap:8px;">
+        {% for eq in session.equipment.all %}
+        <li style="display:flex;align-items:center;gap:10px;">
+          <span style="color:var(--accent);">⚙</span>
+          <a href="{% url 'inventory:equipment_detail' eq.pk %}" style="color:var(--text);text-decoration:none;">{{ eq.name }}</a>
+          <span class="badge-status badge-{{ eq.status }}" style="font-size:10px;">{{ eq.get_status_display }}</span>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p style="color:var(--text-dim);">No equipment reserved.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px;">
+  <a href="{% url 'schedules:session_list' %}" class="btn btn-secondary">← Back to Schedules</a>
+</div>
+{% endblock %}

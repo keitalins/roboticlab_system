@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Schedules{% endblock %}
+{% block page_title %}// LAB SCHEDULES{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+  <form method="get" style="display:flex;gap:10px;">
+    <select name="status" class="form-control" style="max-width:200px;">
+      <option value="">All Statuses</option>
+      {% for val, label in statuses %}
+      <option value="{{ val }}" {% if val == selected_status %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-secondary">Filter</button>
+    <a href="{% url 'schedules:session_list' %}" class="btn btn-secondary">Clear</a>
+  </form>
+  <a href="{% url 'schedules:session_create' %}" class="btn btn-primary">+ Book Session</a>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    {% if sessions %}
+    <table>
+      <thead>
+        <tr><th>Title</th><th>Requested By</th><th>Start</th><th>End</th><th>Duration</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        {% for s in sessions %}
+        <tr>
+          <td><strong>{{ s.title }}</strong></td>
+          <td style="color:var(--text-dim);font-size:13px;">{{ s.requested_by.get_full_name|default:s.requested_by.username }}</td>
+          <td style="font-family:var(--mono);font-size:12px;">{{ s.start_time|date:"M d, H:i" }}</td>
+          <td style="font-family:var(--mono);font-size:12px;">{{ s.end_time|date:"M d, H:i" }}</td>
+          <td style="font-family:var(--mono);font-size:12px;">{{ s.duration_hours }}h</td>
+          <td><span class="badge-status badge-{{ s.status }}">{{ s.get_status_display }}</span></td>
+          <td><a href="{% url 'schedules:session_detail' s.pk %}" class="btn btn-secondary btn-sm">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><div class="icon">◷</div><p>No sessions found.</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

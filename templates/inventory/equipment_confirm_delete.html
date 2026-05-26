@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Delete Equipment{% endblock %}
+{% block page_title %}// DELETE EQUIPMENT{% endblock %}
+{% block content %}
+<div style="max-width:500px;">
+  <div class="card">
+    <div class="card-header"><span class="card-title" style="color:var(--danger);">Confirm Deletion</span></div>
+    <div class="card-body">
+      <p style="margin-bottom:20px;">Are you sure you want to delete <strong>{{ equipment.name }}</strong> ({{ equipment.serial_number }})? This cannot be undone.</p>
+      <form method="post" style="display:flex;gap:10px;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a href="{% url 'inventory:equipment_detail' equipment.pk %}" class="btn btn-secondary">Cancel</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

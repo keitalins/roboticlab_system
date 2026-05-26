@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Sent{% endblock %}
+{% block page_title %}// SENT MESSAGES{% endblock %}
+{% block content %}
+<div style="display:flex;gap:10px;margin-bottom:20px;">
+  <a href="{% url 'messaging_app:inbox' %}" class="btn btn-secondary btn-sm">Inbox</a>
+  <a href="{% url 'messaging_app:sent' %}" class="btn btn-primary btn-sm">Sent</a>
+  <a href="{% url 'messaging_app:compose' %}" class="btn btn-primary" style="margin-left:auto;">+ Compose</a>
+</div>
+<div class="card">
+  <div class="table-wrap">
+    {% if messages_list %}
+    <table>
+      <thead><tr><th>To</th><th>Subject</th><th>Sent</th><th></th></tr></thead>
+      <tbody>
+        {% for msg in messages_list %}
+        <tr>
+          <td>{{ msg.recipient.get_full_name|default:msg.recipient.username }}</td>
+          <td>{{ msg.subject }}</td>
+          <td style="font-family:var(--mono);font-size:12px;color:var(--text-dim);">{{ msg.created_at|date:"M d, H:i" }}</td>
+          <td><a href="{% url 'messaging_app:message_detail' msg.pk %}" class="btn btn-secondary btn-sm">View</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state"><div class="icon">✉</div><p>No sent messages.</p></div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

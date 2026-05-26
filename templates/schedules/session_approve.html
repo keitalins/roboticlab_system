@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Review Session{% endblock %}
+{% block page_title %}// REVIEW SESSION{% endblock %}
+{% block content %}
+<div style="max-width:600px;">
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header"><span class="card-title">Session: {{ session.title }}</span></div>
+    <div class="card-body">
+      <div class="detail-row"><div class="detail-key">Requested By</div><div class="detail-val">{{ session.requested_by.get_full_name|default:session.requested_by.username }}</div></div>
+      <div class="detail-row"><div class="detail-key">Start</div><div class="detail-val" style="font-family:var(--mono);">{{ session.start_time|date:"Y-m-d H:i" }}</div></div>
+      <div class="detail-row"><div class="detail-key">End</div><div class="detail-val" style="font-family:var(--mono);">{{ session.end_time|date:"Y-m-d H:i" }}</div></div>
+      <div class="detail-row"><div class="detail-key">Duration</div><div class="detail-val">{{ session.duration_hours }}h</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Decision</span></div>
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="form-group">
+          <label class="form-label">{{ field.label }}</label>
+          {{ field }}
+        </div>
+        {% endfor %}
+        <div style="display:flex;gap:10px;">
+          <button type="submit" class="btn btn-primary">Submit Decision</button>
+          <a href="{% url 'schedules:session_detail' session.pk %}" class="btn btn-secondary">Back</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

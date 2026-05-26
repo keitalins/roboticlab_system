@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Equipment{% endblock %}
+{% block page_title %}// EQUIPMENT INVENTORY{% endblock %}
+
+{% block content %}
+<form method="get" class="search-bar">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search name or serial…" class="form-control">
+  <select name="status" class="form-control" style="max-width:180px;">
+    <option value="">All Statuses</option>
+    {% for val, label in statuses %}
+    <option value="{{ val }}" {% if val == selected_status %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <select name="category" class="form-control" style="max-width:180px;">
+    <option value="">All Categories</option>
+    {% for c in categories %}
+    <option value="{{ c.pk }}" {% if c.pk|stringformat:"s" == selected_category %}selected{% endif %}>{{ c.name }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-secondary">Filter</button>
+  <a href="{% url 'inventory:equipment_list' %}" class="btn btn-secondary">Clear</a>
+  {% if user.is_admin or user.is_technician %}
+  <a href="{% url 'inventory:equipment_create' %}" class="btn btn-primary" style="margin-left:auto;">+ Add Equipment</a>
+  {% endif %}
+</form>
+
+<div class="card">
+  <div class="table-wrap">
+    {% if equipment_list %}
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th><th>Serial No.</th><th>Category</th>
+          <th>Status</th><th>Location</th><th>Next Maint.</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for eq in equipment_list %}
+        <tr>
+          <td><strong>{{ eq.name }}</strong></td>
+          <td style="font-family:var(--mono);font-size:12px;color:var(--text-dim);">{{ eq.serial_number }}</td>
+          <td>{{ eq.category.name|default:"—" }}</td>
+          <td><span class="badge-status badge-{{ eq.status }}">{{ eq.get_status_display }}</span></td>
+          <td style="color:var(--text-dim);">{{ eq.location|default:"—" }}</td>
+          <td style="font-family:var(--mono);font-size:12px;">
+            {% if eq.next_maintenance %}
+              <span style="color:{% if eq.next_maintenance < today %}var(--danger){% else %}var(--text-dim){% endif %}">
+                {{ eq.next_maintenance|date:"Y-m-d" }}
+              </span>
+            {% else %}—{% endif %}
+          </td>
+          <td>
+            <a href="{% url 'inventory:equipment_detail' eq.pk %}" class="btn btn-secondary btn-sm">View</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+      <div class="icon">⚙</div>
+      <p>No equipment found. {% if user.is_admin or user.is_technician %}<a href="{% url 'inventory:equipment_create' %}" style="color:var(--accent);">Add some →</a>{% endif %}</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

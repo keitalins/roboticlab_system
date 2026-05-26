@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}{{ msg.subject }}{% endblock %}
+{% block page_title %}// MESSAGE{% endblock %}
+{% block content %}
+<div style="max-width:700px;">
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header">
+      <span class="card-title">{{ msg.subject }}</span>
+      <span style="color:var(--text-dim);font-size:12px;font-family:var(--mono);">{{ msg.created_at|date:"Y-m-d H:i" }}</span>
+    </div>
+    <div class="card-body">
+      <div class="detail-row">
+        <div class="detail-key">From</div>
+        <div class="detail-val">{{ msg.sender.get_full_name|default:msg.sender.username }}</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-key">To</div>
+        <div class="detail-val">{{ msg.recipient.get_full_name|default:msg.recipient.username }}</div>
+      </div>
+      <div style="margin-top:20px;white-space:pre-wrap;line-height:1.8;font-size:14px;">{{ msg.body }}</div>
+    </div>
+  </div>
+
+  {% if msg.replies.all %}
+  <div class="card" style="margin-bottom:20px;">
+    <div class="card-header"><span class="card-title">Replies</span></div>
+    {% for reply in msg.replies.all %}
+    <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+        <strong style="font-size:13px;">{{ reply.sender.get_full_name|default:reply.sender.username }}</strong>
+        <span style="color:var(--text-dim);font-size:12px;font-family:var(--mono);">{{ reply.created_at|date:"M d, H:i" }}</span>
+      </div>
+      <div style="white-space:pre-wrap;font-size:14px;line-height:1.7;">{{ reply.body }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div style="display:flex;gap:10px;">
+    {% if msg.recipient == user %}
+    <a href="{% url 'messaging_app:reply' msg.pk %}" class="btn btn-primary">↩ Reply</a>
+    {% endif %}
+    <a href="{% url 'messaging_app:inbox' %}" class="btn btn-secondary">← Back to Inbox</a>
+  </div>
+</div>
+{% endblock %}

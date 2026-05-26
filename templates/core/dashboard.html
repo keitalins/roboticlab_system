@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}// DASHBOARD{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card accent">
+    <div class="stat-value">{{ total_equipment }}</div>
+    <div class="stat-label">Total Equipment</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-value">{{ available_equipment }}</div>
+    <div class="stat-label">Available Now</div>
+  </div>
+  <div class="stat-card orange">
+    <div class="stat-value">{{ pending_sessions }}</div>
+    <div class="stat-label">Pending Sessions</div>
+  </div>
+  <div class="stat-card accent">
+    <div class="stat-value">{{ total_reports }}</div>
+    <div class="stat-label">Lab Reports</div>
+  </div>
+  <div class="stat-card orange">
+    <div class="stat-value">{{ submitted_reports }}</div>
+    <div class="stat-label">Awaiting Review</div>
+  </div>
+  {% if maintenance_due %}
+  <div class="stat-card danger">
+    <div class="stat-value">{{ maintenance_due }}</div>
+    <div class="stat-label">Maintenance Due</div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Upcoming Sessions</span>
+      <a href="{% url 'schedules:session_create' %}" class="btn btn-primary btn-sm">+ Book</a>
+    </div>
+    <div class="table-wrap">
+      {% if upcoming_sessions %}
+      <table>
+        <thead><tr><th>Title</th><th>Start</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for s in upcoming_sessions %}
+          <tr>
+            <td><a href="{% url 'schedules:session_detail' s.pk %}" style="color:var(--accent);text-decoration:none;">{{ s.title }}</a></td>
+            <td style="font-family:var(--mono);font-size:12px;">{{ s.start_time|date:"M d, H:i" }}</td>
+            <td><span class="badge-status badge-{{ s.status }}">{{ s.get_status_display }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state"><div class="icon">◷</div><p>No upcoming sessions</p></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Recent Reports</span>
+      <a href="{% url 'lab_reports:report_create' %}" class="btn btn-primary btn-sm">+ New</a>
+    </div>
+    <div class="table-wrap">
+      {% if recent_reports %}
+      <table>
+        <thead><tr><th>Title</th><th>Author</th><th>Status</th></tr></thead>
+        <tbody>
+          {% for r in recent_reports %}
+          <tr>
+            <td><a href="{% url 'lab_reports:report_detail' r.pk %}" style="color:var(--accent);text-decoration:none;">{{ r.title|truncatechars:30 }}</a></td>
+            <td style="color:var(--text-dim);font-size:13px;">{{ r.author.get_full_name|default:r.author.username }}</td>
+            <td><span class="badge-status badge-{{ r.status }}">{{ r.get_status_display }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state"><div class="icon">◈</div><p>No reports yet</p></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if unread_messages %}
+<div class="alert alert-info" style="margin-top:20px;">
+  You have <strong>{{ unread_messages }}</strong> unread message{{ unread_messages|pluralize }}.
+  <a href="{% url 'messaging_app:inbox' %}" style="color:inherit;font-weight:700;margin-left:8px;">View Inbox →</a>
+</div>
+{% endif %}
+{% endblock %}

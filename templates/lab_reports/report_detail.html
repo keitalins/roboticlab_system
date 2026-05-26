@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}{{ report.title }}{% endblock %}
+{% block page_title %}// REPORT DETAIL{% endblock %}
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;">
+  <div>
+    <h1 style="font-size:20px;font-weight:700;">{{ report.title }}</h1>
+    <div style="color:var(--text-dim);font-size:13px;margin-top:4px;">
+      By {{ report.author.get_full_name|default:report.author.username }} · {{ report.created_at|date:"Y-m-d" }}
+    </div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <span class="badge-status badge-{{ report.status }}">{{ report.get_status_display }}</span>
+    {% if report.author == user %}
+      {% if report.status == 'draft' %}
+      <a href="{% url 'lab_reports:report_edit' report.pk %}" class="btn btn-secondary">Edit</a>
+      <a href="{% url 'lab_reports:report_submit' report.pk %}" class="btn btn-primary">Submit for Review</a>
+      {% endif %}
+    {% endif %}
+    {% if can_review and report.status == 'submitted' %}
+    <a href="{% url 'lab_reports:report_review' report.pk %}" class="btn btn-primary">Review</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-header"><span class="card-title">Content</span></div>
+  <div class="card-body" style="white-space:pre-wrap;line-height:1.7;">{{ report.content }}</div>
+</div>
+
+{% if report.findings %}
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-header"><span class="card-title">Findings</span></div>
+  <div class="card-body" style="white-space:pre-wrap;line-height:1.7;">{{ report.findings }}</div>
+</div>
+{% endif %}
+
+{% if report.conclusion %}
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-header"><span class="card-title">Conclusion</span></div>
+  <div class="card-body" style="white-space:pre-wrap;line-height:1.7;">{{ report.conclusion }}</div>
+</div>
+{% endif %}
+
+{% if report.reviewer_notes %}
+<div class="card" style="margin-bottom:20px;">
+  <div class="card-header"><span class="card-title">Reviewer Notes</span>
+    {% if report.reviewer %}<span style="color:var(--text-dim);font-size:12px;">{{ report.reviewer.get_full_name|default:report.reviewer.username }}</span>{% endif %}
+  </div>
+  <div class="card-body" style="white-space:pre-wrap;line-height:1.7;color:var(--accent);">{{ report.reviewer_notes }}</div>
+</div>
+{% endif %}
+
+{% if report.attachment %}
+<div style="margin-bottom:20px;">
+  <a href="{{ report.attachment.url }}" class="btn btn-secondary" download>⬇ Download Attachment</a>
+</div>
+{% endif %}
+
+<a href="{% url 'lab_reports:report_list' %}" class="btn btn-secondary">← Back to Reports</a>
+{% endblock %}

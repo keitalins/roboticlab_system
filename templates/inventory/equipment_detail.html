@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}{{ equipment.name }}{% endblock %}
+{% block page_title %}// EQUIPMENT DETAIL{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+  <div>
+    <h1 style="font-size:22px;font-weight:700;">{{ equipment.name }}</h1>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);margin-top:4px;">SN: {{ equipment.serial_number }}</div>
+  </div>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <span class="badge-status badge-{{ equipment.status }}">{{ equipment.get_status_display }}</span>
+    {% if user.is_admin or user.is_technician %}
+    <a href="{% url 'inventory:equipment_edit' equipment.pk %}" class="btn btn-secondary">Edit</a>
+    <a href="{% url 'inventory:maintenance_add' equipment.pk %}" class="btn btn-primary">+ Maintenance Log</a>
+    {% if user.is_admin %}
+    <a href="{% url 'inventory:equipment_delete' equipment.pk %}" class="btn btn-danger">Delete</a>
+    {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header"><span class="card-title">Details</span></div>
+    <div class="card-body">
+      <div class="detail-row"><div class="detail-key">Category</div><div class="detail-val">{{ equipment.category.name|default:"—" }}</div></div>
+      <div class="detail-row"><div class="detail-key">Location</div><div class="detail-val">{{ equipment.location|default:"—" }}</div></div>
+      <div class="detail-row"><div class="detail-key">Purchase Date</div><div class="detail-val">{{ equipment.purchase_date|date:"Y-m-d"|default:"—" }}</div></div>
+      <div class="detail-row"><div class="detail-key">Last Maintenance</div><div class="detail-val">{{ equipment.last_maintenance|date:"Y-m-d"|default:"—" }}</div></div>
+      <div class="detail-row"><div class="detail-key">Next Maintenance</div><div class="detail-val">{{ equipment.next_maintenance|date:"Y-m-d"|default:"—" }}</div></div>
+      {% if equipment.description %}
+      <div class="detail-row"><div class="detail-key">Description</div><div class="detail-val">{{ equipment.description }}</div></div>
+      {% endif %}
+      {% if equipment.notes %}
+      <div class="detail-row"><div class="detail-key">Notes</div><div class="detail-val">{{ equipment.notes }}</div></div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><span class="card-title">Maintenance History</span></div>
+    <div class="table-wrap">
+      {% if logs %}
+      <table>
+        <thead><tr><th>Date</th><th>Performed By</th><th>Description</th><th>Cost</th></tr></thead>
+        <tbody>
+          {% for log in logs %}
+          <tr>
+            <td style="font-family:var(--mono);font-size:12px;">{{ log.date|date:"Y-m-d" }}</td>
+            <td style="color:var(--text-dim);">{{ log.performed_by.get_full_name|default:log.performed_by.username|default:"—" }}</td>
+            <td>{{ log.description|truncatechars:60 }}</td>
+            <td style="font-family:var(--mono);">{% if log.cost %}${{ log.cost }}{% else %}—{% endif %}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state"><div class="icon">◈</div><p>No maintenance logs yet</p></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px;">
+  <a href="{% url 'inventory:equipment_list' %}" class="btn btn-secondary">← Back to Equipment</a>
+</div>
+{% endblock %}

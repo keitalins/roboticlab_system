@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | RoboLab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e14; --surface: #111720; --border: #1e2d42;
+      --accent: #00d4ff; --text: #c8d6e5; --text-dim: #5a7a9a;
+      --mono: 'Share Tech Mono', monospace; --sans: 'Barlow', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg); color: var(--text); font-family: var(--sans);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      background-image: radial-gradient(ellipse at 20% 50%, rgba(0,212,255,0.04) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 50%, rgba(255,107,53,0.03) 0%, transparent 50%);
+    }
+    .login-wrap { width: 100%; max-width: 400px; padding: 20px; }
+    .logo { text-align: center; margin-bottom: 40px; }
+    .logo-text { font-family: var(--mono); font-size: 28px; color: var(--accent); letter-spacing: 4px; }
+    .logo-sub { font-size: 11px; color: var(--text-dim); letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; }
+    .login-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 32px; }
+    .login-card h2 { font-size: 16px; font-family: var(--mono); color: var(--accent); margin-bottom: 24px; letter-spacing: 1px; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 6px; font-weight: 600; }
+    .form-control { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 11px 14px; border-radius: 6px; font-family: var(--sans); font-size: 14px; transition: border-color 0.15s; }
+    .form-control:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,212,255,0.1); }
+    .btn-primary { width: 100%; padding: 12px; background: var(--accent); color: var(--bg); border: none; border-radius: 6px; font-family: var(--sans); font-size: 14px; font-weight: 700; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; margin-top: 8px; transition: background 0.15s; }
+    .btn-primary:hover { background: #00b8d9; }
+    .login-footer { text-align: center; margin-top: 20px; font-size: 13px; color: var(--text-dim); }
+    .login-footer a { color: var(--accent); text-decoration: none; }
+    .errorlist { background: rgba(255,71,87,0.08); border: 1px solid rgba(255,71,87,0.3); border-radius: 6px; padding: 10px 14px; margin-bottom: 16px; color: #ff4757; font-size: 13px; list-style: none; }
+  </style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="logo">
+    <div class="logo-text">ROBOLAB</div>
+    <div class="logo-sub">Robotic Lab Management System</div>
+  </div>
+  <div class="login-card">
+    <h2>// SIGN IN</h2>
+    <form method="post">
+      {% csrf_token %}
+      {% if form.errors %}
+        <ul class="errorlist"><li>Invalid username or password.</li></ul>
+      {% endif %}
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        {{ form.username }}
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        {{ form.password }}
+      </div>
+      <button type="submit" class="btn-primary">Authenticate →</button>
+    </form>
+  </div>
+  <div class="login-footer">
+    No account? <a href="{% url 'accounts:register' %}">Register here</a>
+  </div>
+</div>
+</body>
+</html>

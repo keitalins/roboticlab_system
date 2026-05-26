@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{% block title %}RoboLab{% endblock %} | Robotic Lab System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0e14;
+      --surface: #111720;
+      --surface2: #1a2233;
+      --border: #1e2d42;
+      --accent: #00d4ff;
+      --accent2: #ff6b35;
+      --green: #00ff88;
+      --text: #c8d6e5;
+      --text-dim: #5a7a9a;
+      --danger: #ff4757;
+      --warning: #ffa502;
+      --mono: 'Share Tech Mono', monospace;
+      --sans: 'Barlow', sans-serif;
+      --nav-w: 240px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--nav-w);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      padding: 24px 20px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-text {
+      font-family: var(--mono);
+      font-size: 18px;
+      color: var(--accent);
+      letter-spacing: 2px;
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      color: var(--text-dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 16px 0;
+      overflow-y: auto;
+    }
+
+    .nav-section {
+      padding: 8px 20px 4px;
+      font-size: 10px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.15s;
+      border-left: 2px solid transparent;
+      position: relative;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--accent);
+      background: rgba(0, 212, 255, 0.05);
+      border-left-color: var(--accent);
+    }
+
+    .nav-link .badge {
+      margin-left: auto;
+      background: var(--accent2);
+      color: #fff;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-family: var(--mono);
+    }
+
+    .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+    .sidebar-user {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .user-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--bg);
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .user-info { flex: 1; min-width: 0; }
+    .user-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-role { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--nav-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .page-title {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--accent);
+      letter-spacing: 1px;
+    }
+
+    .topbar-actions { display: flex; align-items: center; gap: 16px; }
+
+    .topbar-btn {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 6px;
+      border-radius: 6px;
+      transition: color 0.15s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .topbar-btn:hover { color: var(--accent); }
+
+    .topbar-btn .dot {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 7px; height: 7px;
+      background: var(--accent2);
+      border-radius: 50%;
+      border: 1px solid var(--surface);
+    }
+
+    .content {
+      padding: 32px;
+      flex: 1;
+    }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-title {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .card-body { padding: 20px; }
+
+    /* ── STAT CARDS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+    }
+
+    .stat-card.accent::before { background: var(--accent); }
+    .stat-card.orange::before { background: var(--accent2); }
+    .stat-card.green::before { background: var(--green); }
+    .stat-card.danger::before { background: var(--danger); }
+
+    .stat-value {
+      font-family: var(--mono);
+      font-size: 36px;
+      font-weight: bold;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-card.accent .stat-value { color: var(--accent); }
+    .stat-card.orange .stat-value { color: var(--accent2); }
+    .stat-card.green .stat-value { color: var(--green); }
+    .stat-card.danger .stat-value { color: var(--danger); }
+
+    .stat-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--text-dim);
+    }
+
+    /* ── TABLES ── */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th {
+      padding: 10px 16px;
+      text-align: left;
+      font-family: var(--mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-dim);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid rgba(30,45,66,0.5);
+      vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(0,212,255,0.03); }
+
+    /* ── BADGES ── */
+    .badge-status {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+
+    .badge-available, .badge-approved, .badge-reviewed { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+    .badge-in_use, .badge-ongoing, .badge-submitted { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
+    .badge-maintenance, .badge-pending, .badge-draft { background: rgba(255,165,2,0.1); color: var(--warning); border: 1px solid rgba(255,165,2,0.3); }
+    .badge-retired, .badge-cancelled, .badge-rejected { background: rgba(255,71,87,0.1); color: var(--danger); border: 1px solid rgba(255,71,87,0.3); }
+    .badge-completed { background: rgba(90,122,154,0.2); color: var(--text-dim); border: 1px solid var(--border); }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      border: none;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-primary { background: var(--accent); color: var(--bg); }
+    .btn-primary:hover { background: #00b8d9; }
+    .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-danger { background: rgba(255,71,87,0.15); color: var(--danger); border: 1px solid rgba(255,71,87,0.3); }
+    .btn-danger:hover { background: var(--danger); color: #fff; }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    /* ── FORMS ── */
+    .form-group { margin-bottom: 18px; }
+    .form-label { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 6px; font-weight: 600; }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-family: var(--sans);
+      font-size: 14px;
+      transition: border-color 0.15s;
+    }
+
+    .form-control:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,212,255,0.1); }
+    select.form-control option { background: var(--surface); }
+    textarea.form-control { min-height: 100px; resize: vertical; }
+
+    /* ── ALERTS ── */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      border-left: 3px solid;
+    }
+
+    .alert-success { background: rgba(0,255,136,0.08); border-color: var(--green); color: var(--green); }
+    .alert-error, .alert-danger { background: rgba(255,71,87,0.08); border-color: var(--danger); color: var(--danger); }
+    .alert-warning { background: rgba(255,165,2,0.08); border-color: var(--warning); color: var(--warning); }
+    .alert-info { background: rgba(0,212,255,0.08); border-color: var(--accent); color: var(--accent); }
+
+    /* ── GRID LAYOUT ── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+
+    /* ── SEARCH BAR ── */
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .search-bar .form-control { max-width: 280px; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-dim);
+    }
+
+    .empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.4; }
+    .empty-state p { font-size: 14px; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+    /* ── DETAIL ROW ── */
+    .detail-row { display: flex; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 16px; }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-key { width: 160px; flex-shrink: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-dim); padding-top: 2px; }
+    .detail-val { flex: 1; font-size: 14px; }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); }
+      .main { margin-left: 0; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+{% if user.is_authenticated %}
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">ROBOLAB</div>
+    <div class="logo-sub">Lab Management System</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">Main</div>
+    <a href="{% url 'core:dashboard' %}" class="nav-link {% if request.resolver_match.app_name == 'core' %}active{% endif %}">
+      <span class="nav-icon">⬡</span> Dashboard
+    </a>
+
+    <div class="nav-section">Lab</div>
+    <a href="{% url 'inventory:equipment_list' %}" class="nav-link {% if request.resolver_match.app_name == 'inventory' %}active{% endif %}">
+      <span class="nav-icon">⚙</span> Equipment
+    </a>
+    <a href="{% url 'schedules:session_list' %}" class="nav-link {% if request.resolver_match.app_name == 'schedules' %}active{% endif %}">
+      <span class="nav-icon">◷</span> Schedules
+    </a>
+    <a href="{% url 'lab_reports:report_list' %}" class="nav-link {% if request.resolver_match.app_name == 'lab_reports' %}active{% endif %}">
+      <span class="nav-icon">◈</span> Reports
+    </a>
+
+    <div class="nav-section">Comms</div>
+    <a href="{% url 'messaging_app:inbox' %}" class="nav-link {% if request.resolver_match.app_name == 'messaging_app' %}active{% endif %}">
+      <span class="nav-icon">✉</span> Messages
+      {% if unread_count %}<span class="badge">{{ unread_count }}</span>{% endif %}
+    </a>
+    <a href="{% url 'messaging_app:notifications' %}" class="nav-link">
+      <span class="nav-icon">◉</span> Notifications
+    </a>
+
+    {% if user.is_admin %}
+    <div class="nav-section">Admin</div>
+    <a href="{% url 'accounts:user_list' %}" class="nav-link">
+      <span class="nav-icon">◎</span> Users
+    </a>
+    <a href="/admin/" class="nav-link">
+      <span class="nav-icon">◆</span> Django Admin
+    </a>
+    {% endif %}
+  </nav>
+
+  <div class="sidebar-user">
+    <div class="user-avatar">{{ user.username|first|upper }}</div>
+    <div class="user-info">
+      <div class="user-name">{{ user.get_full_name|default:user.username }}</div>
+      <div class="user-role">{{ user.get_role_display }}</div>
+    </div>
+  </div>
+</aside>
+{% endif %}
+
+<div class="main">
+  {% if user.is_authenticated %}
+  <div class="topbar">
+    <div class="page-title">{% block page_title %}DASHBOARD{% endblock %}</div>
+    <div class="topbar-actions">
+      <a href="{% url 'messaging_app:inbox' %}" class="topbar-btn" title="Messages">
+        ✉
+        {% if unread_count %}<span class="dot"></span>{% endif %}
+      </a>
+      <a href="{% url 'messaging_app:notifications' %}" class="topbar-btn" title="Notifications">◉</a>
+      <a href="{% url 'accounts:profile' %}" class="topbar-btn" title="Profile">◎</a>
+      <a href="{% url 'accounts:logout' %}" class="topbar-btn" title="Logout">⏻</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="content">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+</body>
+</html>
